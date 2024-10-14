@@ -28,7 +28,6 @@ type TxAnalyzer struct {
 
 	txCandidateC chan TxCandidate
 	doneC        chan struct{}
-	infoPublishC chan<- Info
 
 	gotCandidates map[solana.Signature]struct{}
 }

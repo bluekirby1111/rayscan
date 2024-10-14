@@ -27,8 +27,15 @@ func main() {
 	}
 	defer rpcPool.Close()
 
+	var pairPublishC []chan *onchain.PairInfo
+	channel := make(chan *onchain.PairInfo, 100)
+	pairPublishC = append(pairPublishC, channel)
+
+	chHandler := onchain.NewChHandler(pairPublishC)
+	chHandler.Start()
+
 	pairCollector := onchain.NewPairCollector()
-	pairCollector.Start(nil)
+	pairCollector.Start(chHandler.Channels())
 
 	txAnalyzer := onchain.NewTxAnalyzer(rpcPool)
 	txAnalyzer.Start(pairCollector.Channel())

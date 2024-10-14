@@ -42,7 +42,7 @@ func (c *PairCollector) Channel() chan<- Info {
 	return c.infoC
 }
 
-func (c *PairCollector) Start(pairPublishC []chan<- *PairInfo) {
+func (c *PairCollector) Start(pairPublishC []chan *PairInfo) {
 	fmt.Printf("[%v] PairCollector: starting...\n", time.Now().Format("2006-01-02 15:04:05.000"))
 
 	go func() {
@@ -56,7 +56,7 @@ func (c *PairCollector) Start(pairPublishC []chan<- *PairInfo) {
 				continue
 			}
 
-			pair, err := c.handleInfo(genericInfo, pairPublishC)
+			pair, err := c.handleInfo(genericInfo)
 			if err != nil {
 				fmt.Printf("[%v] PairCollector: error handling info (%T): %s\n", time.Now().Format("2006-01-02 15:04:05.000"), genericInfo, err)
 				continue
@@ -73,6 +73,10 @@ func (c *PairCollector) Start(pairPublishC []chan<- *PairInfo) {
 			}
 
 			pair.Readiness = time.Now()
+			//Dispatch ready pair to channels
+			for _, ch := range pairPublishC {
+				ch <- pair
+			}
 
 			// Update pair status.
 			if tokenAddress != solana.WrappedSol {
@@ -84,7 +88,7 @@ func (c *PairCollector) Start(pairPublishC []chan<- *PairInfo) {
 	}()
 }
 
-func (c *PairCollector) handleInfo(genericInfo Info, pairPublishC []chan<- *PairInfo) (*PairInfo, error) {
+func (c *PairCollector) handleInfo(genericInfo Info) (*PairInfo, error) {
 	switch info := genericInfo.(type) {
 	case *serum.MarketInfo:
 		return c.handleMarketInfo(info)
