@@ -1,18 +1,41 @@
 package onchain
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"time"
+
+	"github.com/wagslane/go-rabbitmq"
 )
 
 type ChHandler struct {
-	channels []chan *PairInfo
+	channels  []chan *PairInfo
+	publisher *rabbitmq.Publisher
 }
 
-// TODO: add redis connection to dispatch pair info
-func NewChHandler(channels []chan *PairInfo) *ChHandler {
+func NewChHandler(connUrl string, channels []chan *PairInfo) *ChHandler {
+	conn, err := rabbitmq.NewConn(
+		connUrl,
+		rabbitmq.WithConnectionOptionsLogging,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	publisher, err := rabbitmq.NewPublisher(
+		conn,
+		rabbitmq.WithPublisherOptionsLogging,
+		rabbitmq.WithPublisherOptionsExchangeName("pairs"),
+		rabbitmq.WithPublisherOptionsExchangeDeclare,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	return &ChHandler{
-		channels: channels,
+		channels:  channels,
+		publisher: publisher,
 	}
 }
 
@@ -26,7 +49,18 @@ func (a *ChHandler) Start() {
 	go func() {
 		for _, ch := range a.channels {
 			value := <-ch
-			fmt.Printf("Pair %s", value.TokenInfo.Address)
+			jsonValue, err := json.Marshal(value)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+
+			a.publisher.Publish(
+				[]byte(jsonValue),
+				[]string{"rayscan"},
+				rabbitmq.WithPublishOptionsContentType("application/json"),
+				rabbitmq.WithPublishOptionsExchange("events"),
+			)
 		}
 	}()
 }

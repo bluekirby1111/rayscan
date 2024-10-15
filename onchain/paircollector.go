@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bluekirby1111/rayscan/onchain/raydium"
+	"github.com/bluekirby1111/rayscan/onchain/serum"
 	"github.com/gagliardetto/solana-go"
-	"github.com/patrulek/rayscan/onchain/raydium"
-	"github.com/patrulek/rayscan/onchain/serum"
 )
 
 type Info interface {

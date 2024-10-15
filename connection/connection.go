@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/bluekirby1111/rayscan/config"
 	"github.com/gagliardetto/solana-go/rpc"
 	"github.com/gagliardetto/solana-go/rpc/jsonrpc"
-	"github.com/patrulek/rayscan/config"
 )
 
 type Connection struct {

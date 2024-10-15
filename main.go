@@ -8,9 +8,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/patrulek/rayscan/config"
-	"github.com/patrulek/rayscan/connection"
-	"github.com/patrulek/rayscan/onchain"
+	"github.com/bluekirby1111/rayscan/config"
+	"github.com/bluekirby1111/rayscan/connection"
+	"github.com/bluekirby1111/rayscan/onchain"
 )
 
 func main() {
@@ -27,11 +27,11 @@ func main() {
 	}
 	defer rpcPool.Close()
 
-	var pairPublishC []chan *onchain.PairInfo
+	var pairPublishChannel []chan *onchain.PairInfo
 	channel := make(chan *onchain.PairInfo, 100)
-	pairPublishC = append(pairPublishC, channel)
+	pairPublishChannel = append(pairPublishChannel, channel)
 
-	chHandler := onchain.NewChHandler(pairPublishC)
+	chHandler := onchain.NewChHandler("", pairPublishChannel)
 	chHandler.Start()
 
 	pairCollector := onchain.NewPairCollector()

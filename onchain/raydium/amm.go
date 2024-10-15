@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/bluekirby1111/rayscan/onchain/serum"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
-	"github.com/patrulek/rayscan/onchain/serum"
 )
 
 var (
