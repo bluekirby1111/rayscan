@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/gagliardetto/solana-go v1.8.4
 	github.com/pelletier/go-toml v1.9.5
+	github.com/wagslane/go-rabbitmq v0.14.2
 )
 
 require (

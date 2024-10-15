@@ -1,6 +1,8 @@
 package config
 
-import "github.com/pelletier/go-toml"
+import (
+	"github.com/pelletier/go-toml"
+)
 
 const (
 	DefaultConfigPath = "config.toml"
@@ -15,12 +17,12 @@ type RPCNode struct {
 
 type AmpqPublisher struct {
 	Name string
-	url  string
+	Url  string `toml:"url"`
 }
 
 type Config struct {
-	Nodes     map[string]RPCNode
-	Pulishers map[string]AmpqPublisher
+	Nodes    map[string]RPCNode
+	Pulisher AmpqPublisher `toml:"publisher"`
 }
 
 func LoadConfig(path string) (Config, error) {

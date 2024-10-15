@@ -31,7 +31,7 @@ func main() {
 	channel := make(chan *onchain.PairInfo, 100)
 	pairPublishChannel = append(pairPublishChannel, channel)
 
-	chHandler := onchain.NewChHandler("", pairPublishChannel)
+	chHandler := onchain.NewChHandler(cfg.Pulisher, pairPublishChannel)
 	chHandler.Start()
 
 	pairCollector := onchain.NewPairCollector()
