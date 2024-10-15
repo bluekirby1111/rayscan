@@ -13,8 +13,14 @@ type RPCNode struct {
 	Observer    bool   `toml:"observer"`
 }
 
+type AmpqPublisher struct {
+	Name string
+	url  string
+}
+
 type Config struct {
-	Nodes map[string]RPCNode
+	Nodes     map[string]RPCNode
+	Pulishers map[string]AmpqPublisher
 }
 
 func LoadConfig(path string) (Config, error) {

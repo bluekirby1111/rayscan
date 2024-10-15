@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bluekirby1111/rayscan/connection"
+	"github.com/bluekirby1111/rayscan/onchain/raydium"
+	"github.com/bluekirby1111/rayscan/onchain/serum"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
-	"github.com/patrulek/rayscan/connection"
-	"github.com/patrulek/rayscan/onchain/raydium"
-	"github.com/patrulek/rayscan/onchain/serum"
 )
 
 var Max_Transaction_Version uint64 = 1
