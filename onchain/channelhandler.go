@@ -6,17 +6,18 @@ import (
 	"log"
 	"time"
 
+	"github.com/bluekirby1111/rayscan/config"
 	"github.com/wagslane/go-rabbitmq"
 )
 
 type ChHandler struct {
-	channels  []chan *PairInfo
-	publisher *rabbitmq.Publisher
+	ReceiverChannels []chan *PairInfo
+	Publisher        *rabbitmq.Publisher
 }
 
-func NewChHandler(connUrl string, channels []chan *PairInfo) *ChHandler {
+func NewChHandler(publisherConfig config.AmpqPublisher, channels []chan *PairInfo) *ChHandler {
 	conn, err := rabbitmq.NewConn(
-		connUrl,
+		publisherConfig.Url,
 		rabbitmq.WithConnectionOptionsLogging,
 	)
 	if err != nil {
@@ -34,20 +35,20 @@ func NewChHandler(connUrl string, channels []chan *PairInfo) *ChHandler {
 	}
 
 	return &ChHandler{
-		channels:  channels,
-		publisher: publisher,
+		ReceiverChannels: channels,
+		Publisher:        publisher,
 	}
 }
 
 func (c *ChHandler) Channels() []chan *PairInfo {
-	return c.channels
+	return c.ReceiverChannels
 }
 
 func (a *ChHandler) Start() {
 	fmt.Printf("[%v] ChHandler: starting...\n", time.Now().Format("2006-01-02 15:04:05.000"))
 
 	go func() {
-		for _, ch := range a.channels {
+		for _, ch := range a.ReceiverChannels {
 			value := <-ch
 			jsonValue, err := json.Marshal(value)
 			if err != nil {
@@ -55,12 +56,13 @@ func (a *ChHandler) Start() {
 				continue
 			}
 
-			a.publisher.Publish(
+			a.Publisher.Publish(
 				[]byte(jsonValue),
 				[]string{"rayscan"},
 				rabbitmq.WithPublishOptionsContentType("application/json"),
 				rabbitmq.WithPublishOptionsExchange("events"),
 			)
+
 		}
 	}()
 }

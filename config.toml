@@ -1,3 +1,7 @@
+[publisher]
+url = "amqp://guest:guest@localhost"
+# edit/add RPC nodes if necessary
+
 [nodes]
 
 [nodes.mainnet]
@@ -14,9 +18,3 @@ observer = false
 rpc = "https://api-eu1.tatum.io/v3/solana/web3/{2375e129-91fd-4084-9667-b618257dfeab}"
 ws = "wss://ws.tatum.io/v3/solana/web3/{2375e129-91fd-4084-9667-b618257dfeab}"
 observer = false
-
-[publishers]
-
-[publishers.local]
-url = "amqp://guest:guest@localhost"
-# edit/add RPC nodes if necessary
