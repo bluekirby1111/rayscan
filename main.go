@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"os/signal"
@@ -14,6 +15,13 @@ import (
 )
 
 func main() {
+	var publisherAddr string = ""
+	flag.StringVar(&publisherAddr, "publisher-addr", "", "AMPQ connection string")
+	flag.Parse()
+
+	fmt.Printf("Starting with args: publisherAddr=%s \n", publisherAddr)
+
+	//TODO: move config to args
 	cfg, err := config.LoadConfig(config.DefaultConfigPath)
 	if err != nil {
 		fmt.Printf("Error loading config: %s\n", err)
@@ -31,11 +39,18 @@ func main() {
 	channel := make(chan *onchain.PairInfo, 100)
 	pairPublishChannel = append(pairPublishChannel, channel)
 
-	chHandler := onchain.NewChHandler(cfg.Pulisher, pairPublishChannel)
-	chHandler.Start()
+	var pairCollector *onchain.PairCollector
+	if len(publisherAddr) != 0 {
+		chHandler := onchain.NewChHandler(publisherAddr, pairPublishChannel)
+		chHandler.Start()
 
-	pairCollector := onchain.NewPairCollector()
-	pairCollector.Start(chHandler.Channels())
+		pairCollector = onchain.NewPairCollector()
+		pairCollector.Start(chHandler.Channels())
+	} else {
+		pairCollector = onchain.NewPairCollector()
+		pairCollector.Start(nil)
+
+	}
 
 	txAnalyzer := onchain.NewTxAnalyzer(rpcPool)
 	txAnalyzer.Start(pairCollector.Channel())

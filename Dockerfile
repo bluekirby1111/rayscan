@@ -17,4 +17,4 @@ COPY --from=builder /usr/local/rayscan/config.toml /usr/local/rayscan/config.tom
 
 EXPOSE 80
 
-CMD [ "rayscan" ]
+ENTRYPOINT ["rayscan"]

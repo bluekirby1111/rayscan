@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/bluekirby1111/rayscan/config"
 	"github.com/wagslane/go-rabbitmq"
 )
 
@@ -15,9 +14,9 @@ type ChHandler struct {
 	Publisher        *rabbitmq.Publisher
 }
 
-func NewChHandler(publisherConfig config.AmpqPublisher, channels []chan *PairInfo) *ChHandler {
+func NewChHandler(publisherAddr string, channels []chan *PairInfo) *ChHandler {
 	conn, err := rabbitmq.NewConn(
-		publisherConfig.Url,
+		publisherAddr,
 		rabbitmq.WithConnectionOptionsLogging,
 	)
 	if err != nil {
