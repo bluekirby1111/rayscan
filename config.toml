@@ -1,7 +1,3 @@
-[publisher]
-url = "amqp://guest:guest@localhost"
-# edit/add RPC nodes if necessary
-
 [nodes]
 
 [nodes.mainnet]
